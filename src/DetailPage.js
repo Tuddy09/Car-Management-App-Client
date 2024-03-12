@@ -1,25 +1,46 @@
 // DetailPage.js
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import mockData from './constants';
+import {useParams, useNavigate} from 'react-router-dom';
 
 
-const DetailPage = () => {
-    const { id } = useParams();
-    const entity = mockData.find(entity => entity.id === parseInt(id));
+function DetailPage({data, setData}) {
+    const navigate = useNavigate();
+    const {id} = useParams();
+    const entity = data.find(entity => entity.id === parseInt(id));
 
     if (!entity) return <div>Entity not found</div>;
 
     function removeCar() {
-        alert('Car removed');
+        const newData = data.filter(entity => entity.id !== parseInt(id));
+        setData(newData);
+        navigate('/');
+    }
+
+    function updateCar() {
+        const form = document.querySelector('form');
+        const updatedCar = {
+            id: entity.id,
+            name: form.name.value,
+            type: form.type.value,
+            description: form.description.value
+        };
+        const newData = data.map(entity => entity.id === parseInt(id) ? updatedCar : entity);
+        setData(newData);
+        navigate('/');
     }
 
     return (
         <div className='masterLayout'>
             <h1>Car Details</h1>
-            <p>Name: {entity.name}</p>
-            <p>Type: {entity.type}</p>
-            <p>Description: {entity.description}</p>
+            <form>
+                <label>Name:</label>
+                <input type='text' name='name' defaultValue={entity.name}/>
+                <label>Type:</label>
+                <input type='text' name='type' defaultValue={entity.type}/>
+                <label>Description:</label>
+                <input type='text' name='description' defaultValue={entity.description}/>
+                <button type='button' onClick={updateCar}>Update</button>
+            </form>
             <button onClick={removeCar}>Remove</button>
         </div>
     );

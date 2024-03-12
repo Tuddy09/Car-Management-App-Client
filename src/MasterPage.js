@@ -1,12 +1,19 @@
 // MasterPage.js
 import React from 'react';
 import {Link} from 'react-router-dom';
-import mockData from './constants';
 
 
-const MasterPage = () => {
+function MasterPage({data, setData}) {
     function addCar() {
-        alert('Car added');
+        const form = document.querySelector('form');
+        const newCar = {
+            id: data.length + 1,
+            name: form.name.value,
+            type: form.type.value,
+            description: form.description.value
+        };
+        setData([...data, newCar]);
+        form.reset();
 
     }
     return (
@@ -14,7 +21,7 @@ const MasterPage = () => {
             <div className='masterLayout'>
                 <h1>Cars</h1>
                 <ul>
-                    {mockData.map(entity => (
+                    {data.map(entity => (
                         <li key={entity.id}>
                             <Link to={`/detail/${entity.id}`}>
                                 {entity.name} - {entity.type}
@@ -27,12 +34,12 @@ const MasterPage = () => {
                 <h1>New car</h1>
                 <form>
                     <label>Name:</label>
-                    <input type='text'/>
+                    <input type='text' name='name'/>
                     <label>Type:</label>
-                    <input type='text'/>
+                    <input type='text' name='type'/>
                     <label>Description:</label>
-                    <input type='text'/>
-                    <button type='submit' onClick={addCar}>Add</button>
+                    <input type='text' name='description'/>
+                    <button type='button' onClick={addCar}>Add</button>
                 </form>
             </div>
         </div>
