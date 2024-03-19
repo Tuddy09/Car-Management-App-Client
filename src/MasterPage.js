@@ -1,5 +1,5 @@
 // MasterPage.js
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import Chart from "chart.js/auto";
 import {CategoryScale} from "chart.js";
@@ -7,7 +7,24 @@ import PieChart from "./PieChart";
 
 Chart.register(CategoryScale);
 
+function Page({pageNumber, data}){
+    return (
+        <ul>
+            {data.slice((pageNumber - 1) * 5, pageNumber * 5).map(entity => (
+                <li key={entity.id}>
+                    <Link to={`/detail/${entity.id}`}>
+                        {entity.name} - {entity.type}
+                    </Link>
+                </li>
+            ))}
+        </ul>
+    )
+}
+
 function MasterPage({data, setData}) {
+    const [pageNumber, setPageNumber] = useState(1);
+    const maxPages = Math.ceil(data.length / 5);
+
     function calculateCarTypes() {
         const types = data.map(entity => entity.type);
         const uniqueTypes = [...new Set(types)];
@@ -57,20 +74,29 @@ function MasterPage({data, setData}) {
         setData([...newData]);
     }
 
+    function previousPage() {
+        if (pageNumber > 1) {
+            setPageNumber(pageNumber - 1);
+        }
+    }
+
+    function nextPage() {
+        if (pageNumber < maxPages) {
+            setPageNumber(pageNumber + 1);
+        }
+    }
+
     return (
         <div>
             <div className='masterLayout'>
                 <h1>Cars</h1>
                 <button onClick={sortList}>Sort cars by name</button>
-                <ul>
-                    {data.map(entity => (
-                        <li key={entity.id}>
-                            <Link to={`/detail/${entity.id}`}>
-                                {entity.name} - {entity.type}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <Page data={data} pageNumber={pageNumber}/>
+                <div className='paginationButtons'>
+                    <button onClick={previousPage}>Previous</button>
+                    <p style={{padding: '10px'}}>Page {pageNumber} out of {maxPages}</p>
+                    <button onClick={nextPage}>Next</button>
+                </div>
             </div>
             <div className='addCarDiv'>
                 <h1>New car</h1>
