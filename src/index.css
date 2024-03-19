@@ -7,7 +7,6 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f4f4f4;
 
 }
 
@@ -15,7 +14,6 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f4f4f4;
     margin-top: 20px;
 }
 
@@ -23,11 +21,14 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f4f4f4;
-    margin-top: 20px;
 }
 
-.button {
-    margin-top: 10px;
-    margin-bottom: 10px;
+
+
+.chartDiv {
+    justify-content: center;
+    align-items: center;
+
+    display: flex;
+
 }

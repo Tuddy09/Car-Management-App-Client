@@ -3,6 +3,7 @@ import React from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 
+
 function DetailPage({data, setData}) {
     const navigate = useNavigate();
     const {id} = useParams();
