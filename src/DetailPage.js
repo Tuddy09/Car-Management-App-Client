@@ -1,32 +1,33 @@
 // DetailPage.js
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 
-function DetailPage({data, setData}) {
+function DetailPage() {
     const navigate = useNavigate();
     const {id} = useParams();
-    const entity = data.find(entity => entity.id === parseInt(id));
+    const [entity, setEntity] = useState(null);
+
+    useEffect(() => {
+        fetch(`http://localhost:8080/getCar?id=${id}`)
+            .then(response => response.json())
+            .then(data => setEntity(data));
+    }, [id]);
 
     if (!entity) return <div>Entity not found</div>;
 
     function removeCar() {
-        const newData = data.filter(entity => entity.id !== parseInt(id));
-        setData(newData);
-        navigate('/');
+        fetch(`http://localhost:8080/deleteCar?id=${id}`, {method: 'POST'})
+            .then(() => navigate('/'));
     }
 
     function updateCar() {
         const form = document.querySelector('form');
-        const updatedCar = {
-            id: entity.id,
-            name: form.name.value,
-            type: form.type.value,
-            description: form.description.value
-        };
-        const newData = data.map(entity => entity.id === parseInt(id) ? updatedCar : entity);
-        setData(newData);
-        navigate('/');
+        const formData = new FormData(form);
+        // Create a new object from the form data
+        const updatedCar = Object.fromEntries(formData);
+        fetch(`http://localhost:8080/updateCar?id=${id}&name=${updatedCar.name}&type=${updatedCar.type}&description=${updatedCar.description}`, {method: 'POST'})
+            .then(() => navigate('/'));
     }
 
     return (

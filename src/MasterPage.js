@@ -1,5 +1,5 @@
 // MasterPage.js
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Chart from "chart.js/auto";
 import {CategoryScale} from "chart.js";
@@ -21,7 +21,13 @@ function Page({pageNumber, data}){
     )
 }
 
-function MasterPage({data, setData}) {
+function MasterPage() {
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        fetch('http://localhost:8080/getAllCars')
+            .then(response => response.json())
+            .then(data => setData(data));
+    }, []);
     const [pageNumber, setPageNumber] = useState(1);
     const maxPages = Math.ceil(data.length / 5);
 
@@ -65,8 +71,11 @@ function MasterPage({data, setData}) {
             type: form.type.value,
             description: form.description.value
         };
-        setData([...data, newCar]);
-        form.reset();
+        fetch(`http://localhost:8080/addCar?name=${newCar.name}&type=${newCar.type}&description=${newCar.description}`, {method: 'POST'})
+            .then(() => {
+                setData([...data, newCar]);
+                form.reset();
+            });
     }
 
     function sortList() {
