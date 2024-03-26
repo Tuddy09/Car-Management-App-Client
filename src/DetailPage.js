@@ -17,7 +17,7 @@ function DetailPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function removeCar() {
-        fetch(`http://localhost:8080/deleteCar?id=${id}`, {method: 'POST'})
+        fetch(`http://localhost:8080/deleteCar?id=${id}`, {method: 'DELETE'})
             .then(() => navigate('/'));
     }
 
@@ -26,7 +26,13 @@ function DetailPage() {
         const formData = new FormData(form);
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
-        fetch(`http://localhost:8080/updateCar?id=${id}&name=${updatedCar.name}&type=${updatedCar.type}&description=${updatedCar.description}`, {method: 'POST'})
+        fetch(`http://localhost:8080/updateCar?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedCar)
+        })
             .then(() => navigate('/'));
     }
 

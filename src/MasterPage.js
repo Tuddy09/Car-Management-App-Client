@@ -71,7 +71,14 @@ function MasterPage() {
             type: form.type.value,
             description: form.description.value
         };
-        fetch(`http://localhost:8080/addCar?name=${newCar.name}&type=${newCar.type}&description=${newCar.description}`, {method: 'POST'})
+        // Add the car in the request body
+        fetch('http://localhost:8080/addCar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newCar)
+        })
             .then(() => {
                 setData([...data, newCar]);
                 form.reset();
