@@ -1,13 +1,14 @@
 // MasterPage.js
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Chart from "chart.js/auto";
 import {CategoryScale} from "chart.js";
 import PieChart from "./PieChart";
+import CarContext from "./CarContext";
 
 Chart.register(CategoryScale);
 
-function Page({pageNumber, data}){
+function Page({pageNumber, data}) {
     return (
         <ul>
             {data.slice((pageNumber - 1) * 5, pageNumber * 5).map(entity => (
@@ -22,14 +23,15 @@ function Page({pageNumber, data}){
 }
 
 function MasterPage() {
-    const [data, setData] = useState([]);
-    useEffect(() => {
-        fetch('http://localhost:8080/getAllCars')
-            .then(response => response.json())
-            .then(data => setData(data));
-    }, []);
+    const {data, setData} = useContext(CarContext);
     const [pageNumber, setPageNumber] = useState(1);
     const maxPages = Math.ceil(data.length / 5);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/getCars')
+            .then(response => response.json())
+            .then(data => setData(data));
+    }, [setData]);
 
     function calculateCarTypes() {
         const types = data.map(entity => entity.type);
@@ -42,7 +44,7 @@ function MasterPage() {
         });
     }
 
-    const chartData= {
+    const chartData = {
         labels: data.map(entity => entity.type),
         datasets: [
             {
@@ -63,7 +65,7 @@ function MasterPage() {
     };
 
 
-    function addCar() {
+    function handleAddCar() {
         const form = document.querySelector('form');
         const newCar = {
             id: data.length + 1,
@@ -78,11 +80,11 @@ function MasterPage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newCar)
-        })
-            .then(() => {
-                setData([...data, newCar]);
-                form.reset();
-            });
+        }).then(() => {
+            setData([...data, newCar]);
+            form.reset();
+        });
+
     }
 
     function sortList() {
@@ -123,7 +125,7 @@ function MasterPage() {
                     <input type='text' name='type'/>
                     <label>Description:</label>
                     <input type='text' name='description'/>
-                    <button type='button' onClick={addCar}>Add</button>
+                    <button type='button' onClick={handleAddCar}>Add</button>
                 </form>
             </div>
             <div className='chartDiv'>

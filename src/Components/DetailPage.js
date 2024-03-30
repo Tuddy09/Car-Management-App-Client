@@ -16,12 +16,14 @@ function DetailPage() {
 
     if (!entity) return <div>Entity not found</div>;
 
-    function removeCar() {
-        fetch(`http://localhost:8080/deleteCar?id=${id}`, {method: 'DELETE'})
-            .then(() => navigate('/'));
+    function handleRemoveCar() {
+        fetch(`http://localhost:8080/deleteCar?id=${id}`, {
+            method: 'DELETE'
+        }).then(() => navigate('/'));
+
     }
 
-    function updateCar() {
+    function handleUpdateCar() {
         const form = document.querySelector('form');
         const formData = new FormData(form);
         // Create a new object from the form data
@@ -32,8 +34,7 @@ function DetailPage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(updatedCar)
-        })
-            .then(() => navigate('/'));
+        }).then(() => navigate('/'));
     }
 
     return (
@@ -46,9 +47,9 @@ function DetailPage() {
                 <input type='text' name='type' defaultValue={entity.type}/>
                 <label>Description:</label>
                 <input type='text' name='description' defaultValue={entity.description}/>
-                <button type='button' onClick={updateCar}>Update</button>
+                <button type='button' onClick={handleUpdateCar}>Update</button>
             </form>
-            <button onClick={removeCar}>Remove</button>
+            <button onClick={handleRemoveCar}>Remove</button>
         </div>
     );
 }
