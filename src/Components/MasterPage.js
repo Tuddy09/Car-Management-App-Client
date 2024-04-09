@@ -29,8 +29,18 @@ function MasterPage() {
 
     useEffect(() => {
         fetch('http://localhost:8080/getCars')
-            .then(response => response.json())
-            .then(data => setData(data));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => setData(data))
+            .catch(error => {
+                console.error('There was an error!', error);
+                alert('Failed to fetch cars. Please check your internet connection or try again later.');
+            });
+
     }, [setData]);
 
     function calculateCarTypes() {
