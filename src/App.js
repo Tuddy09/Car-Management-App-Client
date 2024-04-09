@@ -22,6 +22,12 @@ function App() {
                 alert('Failed to fetch cars. Please check your internet connection or try again later.');
             });
         const socket = io('http://localhost:9092');
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+        });
+        socket.on('connect_timeout', () => {
+            console.error('Connection timeout');
+        });
         socket.on('newCar', (newCar) => {
             setData(prevData => [...prevData, newCar]);
             console.log('New car added!', newCar)
@@ -29,7 +35,7 @@ function App() {
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [setData]);
 
     return (
         <CarContext.Provider value={{data, setData}}>

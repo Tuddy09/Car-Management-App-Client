@@ -40,7 +40,6 @@ function MasterPage() {
                 console.error('There was an error!', error);
                 alert('Failed to fetch cars. Please check your internet connection or try again later.');
             });
-
     }, [setData]);
 
     function calculateCarTypes() {
