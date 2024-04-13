@@ -1,13 +1,23 @@
 // App.js
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import MasterPage from './Components/MasterPage';
 import DetailPage from './Components/DetailPage';
 import CarContext from "./Components/CarContext";
 import {io} from "socket.io-client";
+import LoginDialog from "./Components/SignInPage";
 
 function App() {
     const [data, setData] = React.useState([]);
+    const [user, setUser] = useState(null);
+    const [showLogin, setShowLogin] = useState(true);
+
+    const handleLogin = (username, password) => {
+        // Perform login logic here
+        // For now, we'll just set the user directly
+        setUser({ name: username, cars: [] });
+        setShowLogin(false);
+    };
     useEffect(() => {
         fetch('http://localhost:8080/getCars')
             .then(response => {
@@ -40,10 +50,14 @@ function App() {
     return (
         <CarContext.Provider value={{data, setData}}>
             <Router>
-                <Routes>
-                    <Route path="/" element={<MasterPage/>}/>
-                    <Route path="/detail/:id" element={<DetailPage/>}/>
-                </Routes>
+                {showLogin ? (
+                    <LoginDialog onLogin={handleLogin} />
+                ) : (
+                    <Routes>
+                        <Route path="/" element={<MasterPage />} />
+                        <Route path="/detail/:id" element={<DetailPage />} />
+                    </Routes>
+                )}
             </Router>
         </CarContext.Provider>
     );
