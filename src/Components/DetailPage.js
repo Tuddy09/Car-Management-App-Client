@@ -17,7 +17,7 @@ function DetailPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        fetch(`http://localhost:8080/deleteCar?id=${id}`, {
+        fetch(`http://localhost:8080/car/deleteCar?id=${id}`, {
             method: 'DELETE'
         }).then(() => navigate('/'));
 
@@ -28,7 +28,7 @@ function DetailPage() {
         const formData = new FormData(form);
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
-        fetch(`http://localhost:8080/updateCar?id=${id}`, {
+        fetch(`http://localhost:8080/car/updateCar?id=${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

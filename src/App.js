@@ -6,6 +6,8 @@ import DetailPage from './Components/DetailPage';
 import CarContext from "./Components/CarContext";
 import {io} from "socket.io-client";
 import LoginDialog from "./Components/SignInPage";
+import User from "./Components/User";
+import UserContext from "./Components/UserContext";
 
 function App() {
     const [data, setData] = React.useState([]);
@@ -13,24 +15,46 @@ function App() {
     const [showLogin, setShowLogin] = useState(true);
 
     const handleLogin = (username, password) => {
-        // Perform login logic here
-        // For now, we'll just set the user directly
-        setUser({ name: username, cars: [] });
-        setShowLogin(false);
+        // check if username and password are not empty
+        if (!username || !password) {
+            alert('Please enter both username and password');
+            return;
+        }
+        fetch('http://localhost:8080/user/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username, password})
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data.success) {
+                alert('Login successful');
+            } else {
+                alert('New user created successfully!');
+            }
+            setUser({id: data.id, name: username, password: password})
+            setShowLogin(false);
+            // Fetch user cars after successful login
+            fetch(`http://localhost:8080/user/getCarsByUserId?userId=${data.id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP status " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => setData(data))
+                .catch(error => {
+                    console.error('There was an error!', error);
+                    alert('Failed to fetch cars. Please check your internet connection or try again later.');
+                });
+        }).catch(error => {
+            console.error('There was an error!', error);
+            alert('Invalid username or password');
+        });
     };
     useEffect(() => {
-        fetch('http://localhost:8080/getCars')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP status " + response.status);
-                }
-                return response.json();
-            })
-            .then(data => setData(data))
-            .catch(error => {
-                console.error('There was an error!', error);
-                alert('Failed to fetch cars. Please check your internet connection or try again later.');
-            });
         const socket = io('http://localhost:9092');
         socket.on('connect_error', (error) => {
             console.error('Connection error:', error);
@@ -48,18 +72,21 @@ function App() {
     }, [setData]);
 
     return (
-        <CarContext.Provider value={{data, setData}}>
-            <Router>
-                {showLogin ? (
-                    <LoginDialog onLogin={handleLogin} />
-                ) : (
-                    <Routes>
-                        <Route path="/" element={<MasterPage />} />
-                        <Route path="/detail/:id" element={<DetailPage />} />
-                    </Routes>
-                )}
-            </Router>
-        </CarContext.Provider>
+        <UserContext.Provider value={{user, setUser}}>
+            <CarContext.Provider value={{data, setData}}>
+                <Router>
+                    {showLogin ? (
+                        <LoginDialog onLogin={handleLogin}/>
+                    ) : (
+                        <Routes>
+                            <Route path="/" element={<MasterPage/>}/>
+                            <Route path="/detail/:id" element={<DetailPage/>}/>
+                            <Route path="/user" element={<User/>}/>
+                        </Routes>
+                    )}
+                </Router>
+            </CarContext.Provider>
+        </UserContext.Provider>
     );
 }
 

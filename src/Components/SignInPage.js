@@ -16,11 +16,11 @@ function LoginDialog({onLogin}) {
         const data = new FormData(event.currentTarget);
         console.log(
             {
-                email: data.get('email'),
+                username: data.get('username'),
                 password: data.get('password'),
             }
         )
-        const username = data.get('email');
+        const username = data.get('username');
         const password = data.get('password');
         onLogin(username, password);
     };
@@ -50,9 +50,9 @@ function LoginDialog({onLogin}) {
                             required
                             fullWidth
                             id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField

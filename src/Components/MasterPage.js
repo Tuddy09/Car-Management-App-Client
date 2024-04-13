@@ -1,10 +1,14 @@
 // MasterPage.js
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Chart from "chart.js/auto";
 import {CategoryScale} from "chart.js";
 import PieChart from "./PieChart";
 import CarContext from "./CarContext";
+import {AppBar, Toolbar} from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import UserContext from "./UserContext";
+
 
 Chart.register(CategoryScale);
 
@@ -13,7 +17,7 @@ function Page({pageNumber, data}) {
         <ul>
             {data.slice((pageNumber - 1) * 5, pageNumber * 5).map(entity => (
                 <li key={entity.id}>
-                    <Link to={`/detail/${entity.id}`}>
+                    <Link to={`/detail/${entity.id}`} style={{color: 'inherit', textDecoration: 'none'}}>
                         {entity.name} - {entity.type}
                     </Link>
                 </li>
@@ -23,24 +27,11 @@ function Page({pageNumber, data}) {
 }
 
 function MasterPage() {
+    let {user} = useContext(UserContext);
     const {data, setData} = useContext(CarContext);
     const [pageNumber, setPageNumber] = useState(1);
     const maxPages = Math.ceil(data.length / 5);
 
-    useEffect(() => {
-        fetch('http://localhost:8080/getCars')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP status " + response.status);
-                }
-                return response.json();
-            })
-            .then(data => setData(data))
-            .catch(error => {
-                console.error('There was an error!', error);
-                alert('Failed to fetch cars. Please check your internet connection or try again later.');
-            });
-    }, [setData]);
 
     function calculateCarTypes() {
         const types = data.map(entity => entity.type);
@@ -82,8 +73,9 @@ function MasterPage() {
             type: form.type.value,
             description: form.description.value
         };
+        console.log(user)
         // Add the car in the request body
-        fetch('http://localhost:8080/addCar', {
+        fetch(`http://localhost:8080/user/addCarToUser?userId=${user.id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -115,6 +107,13 @@ function MasterPage() {
 
     return (
         <div>
+            <AppBar position="fixed" color="transparent" sx={{boxShadow: 0}}>
+                <Toolbar>
+                    <Link to="/user" style={{color: 'inherit'}}>
+                        <AccountCircleIcon color="black"/>
+                    </Link>
+                </Toolbar>
+            </AppBar>
             <div className='masterLayout'>
                 <h1>Cars</h1>
                 <button onClick={sortList}>Sort cars by name</button>
