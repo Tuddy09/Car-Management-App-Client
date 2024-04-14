@@ -1,15 +1,19 @@
 // DetailPage.js
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
+import UserContext from "./UserContext";
+import CarContext from "./CarContext";
 
 
 function DetailPage() {
     const navigate = useNavigate();
     const {id} = useParams();
     const [entity, setEntity] = useState(null);
+    const {user} = useContext(UserContext);
+    const {setData} = useContext(CarContext);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/getCar?id=${id}`)
+        fetch(`http://localhost:8080/car/getCar?id=${id}`)
             .then(response => response.json())
             .then(data => setEntity(data));
     }, [id]);
@@ -17,9 +21,11 @@ function DetailPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        fetch(`http://localhost:8080/car/deleteCar?id=${id}`, {
+        fetch(`http://localhost:8080/user/removeCarFromUser?userId=${user.id}&carId=${id}`, {
             method: 'DELETE'
-        }).then(() => navigate('/'));
+        })
+            .then(() => setData(data => data.filter(car => car.id !== id)))
+            .then(() => navigate('/'));
 
     }
 
@@ -28,6 +34,7 @@ function DetailPage() {
         const formData = new FormData(form);
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
+        updatedCar.id = id;
         fetch(`http://localhost:8080/car/updateCar?id=${id}`, {
             method: 'PUT',
             headers: {

@@ -34,7 +34,7 @@ function App() {
             } else {
                 alert('New user created successfully!');
             }
-            setUser({id: data.id, name: username, password: password})
+            setUser({id: data.id, username: username, password: password})
             setShowLogin(false);
             // Fetch user cars after successful login
             fetch(`http://localhost:8080/user/getCarsByUserId?userId=${data.id}`)
@@ -81,7 +81,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<MasterPage/>}/>
                             <Route path="/detail/:id" element={<DetailPage/>}/>
-                            <Route path="/user" element={<User/>}/>
+                            <Route path="/user" element={<User setShowLogin={setShowLogin}/>}/>
                         </Routes>
                     )}
                 </Router>

@@ -1,5 +1,5 @@
 // MasterPage.js
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Chart from "chart.js/auto";
 import {CategoryScale} from "chart.js";
@@ -27,11 +27,25 @@ function Page({pageNumber, data}) {
 }
 
 function MasterPage() {
-    let {user} = useContext(UserContext);
+    const {user} = useContext(UserContext);
     const {data, setData} = useContext(CarContext);
     const [pageNumber, setPageNumber] = useState(1);
     const maxPages = Math.ceil(data.length / 5);
 
+    useEffect(() => {
+        fetch(`http://localhost:8080/user/getCarsByUserId?userId=${user.id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => setData(data))
+            .catch(error => {
+                console.error('There was an error!', error);
+                alert('Failed to fetch cars. Please check your internet connection or try again later.');
+            });
+    }, [setData, user.id]);
 
     function calculateCarTypes() {
         const types = data.map(entity => entity.type);
@@ -81,11 +95,13 @@ function MasterPage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newCar)
-        }).then(() => {
+        }).then(response => {
+            return response.json();
+        }).then(responseData => {
+            newCar.id = responseData.id;
             setData([...data, newCar]);
-            form.reset();
+            console.log('New car added!', newCar);
         });
-
     }
 
     function sortList() {
