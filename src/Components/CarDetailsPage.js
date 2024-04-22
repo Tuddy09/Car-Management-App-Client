@@ -1,15 +1,13 @@
-// DetailPage.js
+// CarDetailsPage.js
 import React, {useContext, useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
-import UserContext from "./UserContext";
 import CarContext from "./CarContext";
 
 
-function DetailPage() {
+function CarDetailsPage() {
     const navigate = useNavigate();
     const {id} = useParams();
     const [entity, setEntity] = useState(null);
-    const {user} = useContext(UserContext);
     const {setData} = useContext(CarContext);
 
     useEffect(() => {
@@ -21,11 +19,18 @@ function DetailPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        fetch(`http://localhost:8080/user/removeCarFromUser?userId=${user.id}&carId=${id}`, {
+        fetch(`http://localhost:8080/user/removeCarFromUser?carId=${id}`, {
             method: 'DELETE'
         })
-            .then(() => setData(data => data.filter(car => car.id !== id)))
-            .then(() => navigate('/'));
+            .then(() => {
+                setData(data => data.filter(car => car.id !== id));
+                navigate('/');
+            })
+            .catch(() => {
+                //if the request fails, we do the action locally
+                setData(data => data.filter(car => car.id !== id));
+                navigate('/');
+            })
 
     }
 
@@ -41,7 +46,15 @@ function DetailPage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(updatedCar)
-        }).then(() => navigate('/'));
+        }).then(() => {
+            // Update the car in the local state
+            setData(data => data.map(car => car.id === id ? updatedCar : car));
+            navigate('/');
+        }).catch(() => {
+            //if the request fails, we do the action locally
+            setData(data => data.map(car => car.id === id ? updatedCar : car));
+            navigate('/');
+        });
     }
 
     return (
@@ -61,4 +74,4 @@ function DetailPage() {
     );
 }
 
-export default DetailPage;
+export default CarDetailsPage;
