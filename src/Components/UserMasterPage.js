@@ -28,7 +28,11 @@ function UserMasterPage() {
             .then(response => response.json())
             .then(data => {
                 setData(data);
-            });
+            }).then(() => {
+            navigator.serviceWorker.ready.then(function (registration) {
+                registration.sync.register('syncPendingActions');
+            })
+        })
     }, [setData]);
 
 
@@ -56,9 +60,6 @@ function UserMasterPage() {
             form.reset();
         }).catch(() => {
             // If the request fails, we store the action in the IndexedDB
-            navigator.serviceWorker.ready.then(function (registration) {
-                registration.sync.register('syncPendingActions');
-            });
         });
     }
 

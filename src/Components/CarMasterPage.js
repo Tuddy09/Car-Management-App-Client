@@ -40,6 +40,11 @@ function CarMasterPage() {
                 return response.json();
             })
             .then(data => setData(data))
+            .then(() => {
+                navigator.serviceWorker.ready.then(function (registration) {
+                    registration.sync.register('syncPendingActions');
+                })
+            })
             .catch(() => {
                 alert("The server is not responding. Sync will be attempted later.");
             });
