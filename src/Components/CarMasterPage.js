@@ -109,9 +109,6 @@ function CarMasterPage() {
             form.reset();
         }).catch(() => {
             // If the request fails, we store the action in the IndexedDB
-            navigator.serviceWorker.ready.then(function (registration) {
-                registration.sync.register('syncPendingActions');
-            });
         });
     }
 

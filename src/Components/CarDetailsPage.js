@@ -19,10 +19,6 @@ function CarDetailsPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        navigator.serviceWorker.ready.then(function (registration) {
-            registration.sync.register('syncPendingActions');
-        });
-
         fetch(`http://localhost:8080/user/removeCarFromUser?carId=${id}`, {
             method: 'DELETE'
         })
@@ -44,11 +40,6 @@ function CarDetailsPage() {
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
         updatedCar.id = id;
-
-        navigator.serviceWorker.ready.then(function (registration) {
-            registration.sync.register('syncPendingActions');
-        });
-
         fetch(`http://localhost:8080/car/updateCar?id=${id}`, {
             method: 'PUT',
             headers: {
