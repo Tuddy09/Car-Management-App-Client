@@ -11,10 +11,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 Chart.register(CategoryScale);
 
-function Page({pageNumber, data}) {
+function Page({data}) {
     return (
         <ul>
-            {data.slice((pageNumber - 1) * 5, pageNumber * 5).map(entity => (
+            {data.map(entity => (
                 <li key={entity.id}>
                     <Link to={`/detail/${entity.id}`} style={{color: 'inherit', textDecoration: 'none'}}>
                         {entity.name} - {entity.type}
@@ -28,11 +28,17 @@ function Page({pageNumber, data}) {
 function CarMasterPage() {
     const {userId} = useParams();
     const {data, setData} = useContext(CarContext);
-    const [pageNumber, setPageNumber] = useState(1);
-    const maxPages = Math.ceil(data.length / 5);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [maxPages, setMaxPages] = useState(1);
+
 
     useEffect(() => {
-        fetch(`http://localhost:8080/user/getCarsByUserId?userId=${userId}`)
+        fetch('http://localhost:8080/car/getPagesCount')
+            .then(response => response.json())
+            .then(data => {
+                setMaxPages(data);
+            })
+        fetch(`http://localhost:8080/car/getPages?page=${pageNumber}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("HTTP status " + response.status);
@@ -48,7 +54,7 @@ function CarMasterPage() {
             .catch(() => {
                 alert("The server is not responding. Sync will be attempted later.");
             });
-    }, [setData, userId]);
+    }, [pageNumber, setData, userId]);
 
     function calculateCarTypes() {
         const types = data.map(entity => entity.type);
@@ -118,7 +124,7 @@ function CarMasterPage() {
     }
 
     function previousPage() {
-        if (pageNumber > 1) {
+        if (pageNumber > 0) {
             setPageNumber(pageNumber - 1);
         }
     }
@@ -141,12 +147,13 @@ function CarMasterPage() {
             <div className='masterLayout'>
                 <h1>Cars</h1>
                 <button onClick={sortList}>Sort cars by name</button>
-                <Page data={data} pageNumber={pageNumber}/>
                 <div className='paginationButtons'>
                     <button onClick={previousPage}>Previous</button>
                     <p style={{padding: '10px'}}>Page {pageNumber} out of {maxPages}</p>
                     <button onClick={nextPage}>Next</button>
                 </div>
+                <Page data={data}/>
+
             </div>
             <div className='addCarDiv'>
                 <h1>New car</h1>

@@ -4,10 +4,10 @@ import {Link} from 'react-router-dom';
 import UserContext from "./UserContext";
 
 
-function Page({pageNumber, data}) {
+function Page({data}) {
     return (
         <ul>
-            {data.slice((pageNumber - 1) * 5, pageNumber * 5).map(entity => (
+            {data.map(entity => (
                 <li key={entity.id}>
                     <Link to={`/user/${entity.id}`}
                           style={{color: 'inherit', textDecoration: 'none'}}>{entity.username}</Link>
@@ -19,12 +19,17 @@ function Page({pageNumber, data}) {
 
 function UserMasterPage() {
     const {data, setData} = useContext(UserContext);
-    const [pageNumber, setPageNumber] = useState(1);
-    const maxPages = Math.ceil(data.length / 5);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [maxPages, setMaxPages] = useState(1);
 
 
     useEffect(() => {
-        fetch('http://localhost:8080/user/getUsers')
+        fetch('http://localhost:8080/user/getPagesCount')
+            .then(response => response.json())
+            .then(data => {
+                setMaxPages(data);
+            })
+        fetch(`http://localhost:8080/user/getPages?page=${pageNumber}`)
             .then(response => response.json())
             .then(data => {
                 setData(data);
@@ -33,7 +38,7 @@ function UserMasterPage() {
                 registration.sync.register('syncPendingActions');
             })
         })
-    }, [setData]);
+    }, [pageNumber, setData]);
 
 
     function handleAddUser() {
@@ -65,7 +70,7 @@ function UserMasterPage() {
 
 
     function previousPage() {
-        if (pageNumber > 1) {
+        if (pageNumber > 0) {
             setPageNumber(pageNumber - 1);
         }
     }
@@ -80,12 +85,12 @@ function UserMasterPage() {
         <div>
             <div className='masterLayout'>
                 <h1>Users</h1>
-                <Page data={data} pageNumber={pageNumber}/>
                 <div className='paginationButtons'>
                     <button onClick={previousPage}>Previous</button>
                     <p style={{padding: '10px'}}>Page {pageNumber} out of {maxPages}</p>
                     <button onClick={nextPage}>Next</button>
                 </div>
+                <Page data={data}/>
             </div>
             <div className='addCarDiv'>
                 <h1>New user</h1>
