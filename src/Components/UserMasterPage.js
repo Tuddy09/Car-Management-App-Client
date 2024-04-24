@@ -10,7 +10,7 @@ function Page({data}) {
             {data.map(entity => (
                 <li key={entity.id}>
                     <Link to={`/user/${entity.id}`}
-                          style={{color: 'inherit', textDecoration: 'none'}}>{entity.username}</Link>
+                          style={{color: 'inherit', textDecoration: 'none'}}>{entity.username} {entity.carCount}</Link>
                 </li>
             ))}
         </ul>
@@ -58,9 +58,7 @@ function UserMasterPage() {
                 throw new Error("HTTP status " + response.status);
             }
             return response.json();
-        }).then(responseData => {
-            newUser.id = responseData.id;
-            setData([...data, newUser]);
+        }).then(() => {
             console.log('New user added!', newUser);
             form.reset();
         }).catch(() => {

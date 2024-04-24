@@ -33,12 +33,12 @@ function CarMasterPage() {
 
 
     useEffect(() => {
-        fetch('http://localhost:8080/car/getPagesCount')
+        fetch(`http://localhost:8080/car/getPagesCount?userId=${userId}`)
             .then(response => response.json())
             .then(data => {
                 setMaxPages(data);
             })
-        fetch(`http://localhost:8080/car/getPages?page=${pageNumber}`)
+        fetch(`http://localhost:8080/car/getPages?page=${pageNumber}&userId=${userId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("HTTP status " + response.status);
@@ -91,7 +91,6 @@ function CarMasterPage() {
     function handleAddCar() {
         const form = document.querySelector('form');
         const newCar = {
-            id: data.length + 1,
             name: form.name.value,
             type: form.type.value,
             description: form.description.value
@@ -108,9 +107,7 @@ function CarMasterPage() {
                 throw new Error("HTTP status " + response.status);
             }
             return response.json();
-        }).then(responseData => {
-            newCar.id = responseData.id;
-            setData([...data, newCar]);
+        }).then(() => {
             console.log('New car added!', newCar);
             form.reset();
         }).catch(() => {
