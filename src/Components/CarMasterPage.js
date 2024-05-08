@@ -33,12 +33,18 @@ function CarMasterPage() {
 
 
     useEffect(() => {
-        fetch(`http://localhost:8080/car/getPagesCount?userId=${userId}`)
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getPagesCount?userId=${userId}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }})
             .then(response => response.json())
             .then(data => {
                 setMaxPages(data);
             })
-        fetch(`http://localhost:8080/car/getPages?page=${pageNumber}&userId=${userId}`)
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getPages?page=${pageNumber}&userId=${userId}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }})
             .then(response => {
                 if (!response.ok) {
                     throw new Error("HTTP status " + response.status);
@@ -47,9 +53,6 @@ function CarMasterPage() {
             })
             .then(data => setData(data))
             .then(() => {
-                navigator.serviceWorker.ready.then(function (registration) {
-                    registration.sync.register('syncPendingActions');
-                })
             })
             .catch(() => {
                 alert("The server is not responding. Sync will be attempted later.");
@@ -96,9 +99,12 @@ function CarMasterPage() {
             description: form.description.value
         };
 
-        fetch(`http://localhost:8080/user/addCarToUser?userId=${userId}`, {
+        form.reset();
+
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/addCarToUser?userId=${userId}`, {
             method: 'POST',
             headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newCar)
@@ -109,6 +115,7 @@ function CarMasterPage() {
             return response.json();
         }).then(() => {
             console.log('New car added!', newCar);
+            setData([...data, newCar]);
             form.reset();
         }).catch(() => {
             // If the request fails, we store the action in the IndexedDB

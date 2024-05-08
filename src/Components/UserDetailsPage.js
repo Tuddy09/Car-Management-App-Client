@@ -1,13 +1,18 @@
 import React, {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-function UserDetailsPage({setShowLogin}) {
+function UserDetailsPage() {
     const {userId} = useParams();
     const navigate = useNavigate();
     const [user, setUser] = React.useState({});
 
     useEffect(() => {
-        fetch(`http://localhost:8080/user/getUser?id=${userId}`)
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/getUser?id=${userId}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => response.json())
             .then(data => setUser(data));
     }, [userId]);
@@ -16,8 +21,9 @@ function UserDetailsPage({setShowLogin}) {
         const form = document.querySelector('form');
         const formData = new FormData(form);
         const updatedUser = Object.fromEntries(formData);
-        fetch(`http://localhost:8080/user/updateUser?id=${userId}`, {
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/updateUser?id=${userId}`, {
             method: 'PUT', headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
                 'Content-Type': 'application/json'
             }, body: JSON.stringify(updatedUser)
         }).then(() => setUser(updatedUser))
@@ -25,8 +31,12 @@ function UserDetailsPage({setShowLogin}) {
     }
 
     function handleRemoveUser() {
-        fetch(`http://localhost:8080/user/deleteUser?id=${userId}`, {
-            method: 'DELETE'
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/deleteUser?id=${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
+                'Content-Type': 'application/json'
+            }
         })
             .then(() => navigate('/'));
     }

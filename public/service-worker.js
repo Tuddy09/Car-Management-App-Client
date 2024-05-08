@@ -22,7 +22,7 @@ self.addEventListener('install', (event) => {
 });
 
 // eslint-disable-next-line no-restricted-globals
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', () => {
     console.log('Service worker activated');
 });
 
@@ -120,6 +120,7 @@ self.addEventListener('fetch', (event) => {
                 })
                 .catch((err) => {
                     // Network request failed, try to get it from the cache.
+                    console.log(err)
                     console.log('Network request failed, trying to get the response from the cache for', event.request.url);
                     return caches.match(event.request);
                 })
@@ -128,7 +129,7 @@ self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') {
         event.respondWith(
             fetch(event.request.clone())
-                .catch((error) => {
+                .catch(() => {
                     // Generate a temporary ID for the user
                     const tempId = Date.now().toString();
                     return saveRequestToIndexedDB(event.request)

@@ -11,7 +11,12 @@ function CarDetailsPage() {
     const {setData} = useContext(CarContext);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/car/getCar?id=${id}`)
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getCar?id=${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => response.json())
             .then(data => setEntity(data));
     }, [id]);
@@ -19,7 +24,10 @@ function CarDetailsPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        fetch(`http://localhost:8080/user/removeCarFromUser?carId=${id}`, {
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/removeCarFromUser?carId=${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
+            },
             method: 'DELETE'
         })
             .then(() => {
@@ -40,9 +48,10 @@ function CarDetailsPage() {
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
         updatedCar.id = id;
-        fetch(`http://localhost:8080/car/updateCar?id=${id}`, {
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/updateCar?id=${id}`, {
             method: 'PUT',
             headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(updatedCar)

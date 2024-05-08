@@ -24,19 +24,26 @@ function UserMasterPage() {
 
 
     useEffect(() => {
-        fetch('http://localhost:8080/user/getPagesCount')
+        fetch('https://mpp-backend-422621.lm.r.appspot.com/user/getPagesCount',
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+            })
             .then(response => response.json())
             .then(data => {
                 setMaxPages(data);
             })
-        fetch(`http://localhost:8080/user/getPages?page=${pageNumber}`)
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/getPages?page=${pageNumber}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 setData(data);
             }).then(() => {
-            navigator.serviceWorker.ready.then(function (registration) {
-                registration.sync.register('syncPendingActions');
-            })
         })
     }, [pageNumber, setData]);
 
@@ -47,9 +54,10 @@ function UserMasterPage() {
             username: form.username.value,
             password: form.password.value
         }
-        fetch(`http://localhost:8080/user/addUser`, {
+        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/addUser`, {
             method: 'POST',
             headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newUser)
@@ -57,9 +65,11 @@ function UserMasterPage() {
             if (!response.ok) {
                 throw new Error("HTTP status " + response.status);
             }
+            // check if response does not contain message field
             return response.json();
         }).then(() => {
             console.log('New user added!', newUser);
+            setData([...data, newUser]);
             form.reset();
         }).catch(() => {
             // If the request fails, we store the action in the IndexedDB
