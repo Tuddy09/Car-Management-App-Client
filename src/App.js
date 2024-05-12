@@ -8,6 +8,7 @@ import UserDetailsPage from "./Components/UserDetailsPage";
 import UserContext from "./Components/UserContext";
 import UserMasterPage from "./Components/UserMasterPage";
 import LoginDialog from "./Components/Login";
+import {BACKEND_URL} from "./Constants";
 
 function App() {
     const [cars, setCars] = React.useState([]);
@@ -17,7 +18,7 @@ function App() {
     function handleLogin(username, password) {
         // Add your login logic here
         console.log(`Logging in with ${username} and ${password}`);
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/login`, {
+        fetch(`https://${BACKEND_URL}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ function App() {
     function handleRegister(username, password) {
         // Add your register logic here
         console.log(`Registering with ${username} and ${password}`);
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/register`, {
+        fetch(`https://${BACKEND_URL}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

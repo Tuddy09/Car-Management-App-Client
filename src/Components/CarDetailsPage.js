@@ -2,6 +2,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import CarContext from "./CarContext";
+import {BACKEND_URL} from "../Constants";
 
 
 function CarDetailsPage() {
@@ -11,7 +12,7 @@ function CarDetailsPage() {
     const {setData} = useContext(CarContext);
 
     useEffect(() => {
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getCar?id=${id}`, {
+        fetch(`https://${BACKEND_URL}/car/getCar?id=${id}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
                 'Content-Type': 'application/json'
@@ -24,7 +25,7 @@ function CarDetailsPage() {
     if (!entity) return <div>Entity not found</div>;
 
     function handleRemoveCar() {
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/removeCarFromUser?carId=${id}`, {
+        fetch(`https://${BACKEND_URL}/user/removeCarFromUser?carId=${id}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
             },
@@ -48,7 +49,7 @@ function CarDetailsPage() {
         // Create a new object from the form data
         const updatedCar = Object.fromEntries(formData);
         updatedCar.id = id;
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/updateCar?id=${id}`, {
+        fetch(`https://${BACKEND_URL}/car/updateCar?id=${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers

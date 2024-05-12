@@ -7,6 +7,7 @@ import PieChart from "./PieChart";
 import CarContext from "./CarContext";
 import {AppBar, Toolbar} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import {BACKEND_URL} from "../Constants";
 
 
 Chart.register(CategoryScale);
@@ -33,7 +34,7 @@ function CarMasterPage() {
 
 
     useEffect(() => {
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getPagesCount?userId=${userId}`, {
+        fetch(`https://${BACKEND_URL}/car/getPagesCount?userId=${userId}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
             }})
@@ -41,7 +42,7 @@ function CarMasterPage() {
             .then(data => {
                 setMaxPages(data);
             })
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/car/getPages?page=${pageNumber}&userId=${userId}`, {
+        fetch(`https://${BACKEND_URL}/car/getPages?page=${pageNumber}&userId=${userId}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
             }})
@@ -101,7 +102,7 @@ function CarMasterPage() {
 
         form.reset();
 
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/addCarToUser?userId=${userId}`, {
+        fetch(`https://${BACKEND_URL}/user/addCarToUser?userId=${userId}`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),

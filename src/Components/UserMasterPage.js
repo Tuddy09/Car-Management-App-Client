@@ -2,6 +2,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import UserContext from "./UserContext";
+import {BACKEND_URL} from "../Constants";
 
 
 function Page({data}) {
@@ -24,7 +25,7 @@ function UserMasterPage() {
 
 
     useEffect(() => {
-        fetch('https://mpp-backend-422621.lm.r.appspot.com/user/getPagesCount',
+        fetch(`https://${BACKEND_URL}/user/getPagesCount`,
             {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -34,7 +35,7 @@ function UserMasterPage() {
             .then(data => {
                 setMaxPages(data);
             })
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/getPages?page=${pageNumber}`, {
+        fetch(`https://${BACKEND_URL}/user/getPages?page=${pageNumber}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 'Content-Type': 'application/json'
@@ -54,7 +55,7 @@ function UserMasterPage() {
             username: form.username.value,
             password: form.password.value
         }
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/addUser`, {
+        fetch(`https://${BACKEND_URL}/user/addUser`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),

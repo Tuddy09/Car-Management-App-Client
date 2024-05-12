@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
+import {BACKEND_URL} from "../Constants";
 
 function UserDetailsPage() {
     const {userId} = useParams();
@@ -7,7 +8,7 @@ function UserDetailsPage() {
     const [user, setUser] = React.useState({});
 
     useEffect(() => {
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/getUser?id=${userId}`, {
+        fetch(`https://${BACKEND_URL}/user/getUser?id=${userId}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
                 'Content-Type': 'application/json'
@@ -21,7 +22,7 @@ function UserDetailsPage() {
         const form = document.querySelector('form');
         const formData = new FormData(form);
         const updatedUser = Object.fromEntries(formData);
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/updateUser?id=${userId}`, {
+        fetch(`https://${BACKEND_URL}/user/updateUser?id=${userId}`, {
             method: 'PUT', headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
                 'Content-Type': 'application/json'
@@ -31,7 +32,7 @@ function UserDetailsPage() {
     }
 
     function handleRemoveUser() {
-        fetch(`https://mpp-backend-422621.lm.r.appspot.com/user/deleteUser?id=${userId}`, {
+        fetch(`https://${BACKEND_URL}/user/deleteUser?id=${userId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'), // Add the token to the headers
